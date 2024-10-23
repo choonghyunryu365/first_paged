@@ -447,6 +447,42 @@ fig_age
 ```
 
 
+## 인구관련 뉴스 분석 {#news-wc}
+
+**"서울시 인구"**를 키워드를 적용한 네이버 뉴스 검색 스크랩으로 1,000건의 뉴스 기사를 수집하여 **워드클라우드**로 시각화하였습니다.
+
+**보행**, **교통**, **교통사고**, **횡단보도**, **버스**와 같은 교통/안전 토픽과 **고령화**, **고령**, **출생**, **감소**와 같은 출산/고령화 이슈가 뉴스에 많이 다루어진 것으로 나타났습니다.
+
+**혁신**, **정책**, **복지**, **활성**, **대응** 등 복지와 정책에 대한 제안 관련 뉴스도 다루어진 것으로 나타났습니다.
+ 
+
+```{r noun-word, echo=FALSE, message=FALSE, warning=FALSE, include=FALSE}
+library(webshot)
+library(htmlwidgets)
+library(showtext)
+
+showtext_auto()
+
+none_population <- readr::read_csv("data/none_population.csv")
+
+min_freq <- 3
+remove_n <- 3
+
+none_seoul <- none_population |>
+  filter(mega %in% "seoul") |>
+  filter(n >= min_freq) |>
+  filter(row_number() > remove_n) |>
+  select(-mega) |>
+  wordcloud2::wordcloud2(fontFamily = "NanumSquare")
+
+saveWidget(none_seoul, "tmp.html", selfcontained = FALSE)
+webshot("tmp.html", "seoul.png", delay = 5, vwidth = 1200, vheight = 900)
+```
+
+```{r news-seoul, echo=FALSE, out.width = "100%", fig.align='center', fig.cap="서울특별시 인구 관련 뉴스 키워드"}
+knitr::include_graphics("seoul.png")
+```
+
 
 ::: {.back-cover}
 

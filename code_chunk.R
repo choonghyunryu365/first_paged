@@ -50,7 +50,7 @@ knitr::kable(
   col.names = c("구 이름", "인구(명)", "면적(km^2^)", "인구밀도(명/km^2^)"),
   format.args = list(big.mark = ",", digit = 2, scientific = FALSE),
   caption = "구별 면적 및 인구통계 현황")
-  
+
 ##------------------------------------------------------------------------------
 ## 성별 인구 현황 계산
 ##------------------------------------------------------------------------------
@@ -139,10 +139,10 @@ knitr::kable(
   format.args = list(big.mark = ",", scientific = FALSE),
   caption = "구별 연령별 인구 현황")
 
-  
-  
+
+
 ### 연령별 인구 구성비 현황
-  
+
 ##------------------------------------------------------------------------------
 ## 연령별 인구 현황 계산
 ##------------------------------------------------------------------------------
@@ -191,3 +191,25 @@ fig_age <- population_age_ratio |>
        fill = "연령대") 
 
 fig_age
+
+
+##------------------------------------------------------------------------------
+## 인구관련 뉴스 분석 워드클라우드 시각화
+##------------------------------------------------------------------------------   
+library(webshot)
+library(htmlwidgets)
+
+none_population <- readr::read_csv("data/none_population.csv")
+
+min_freq <- 3
+remove_n <- 3
+
+none_seoul <- none_population |>
+  filter(mega %in% "seoul") |>
+  filter(n >= min_freq) |>
+  filter(row_number() > remove_n) |>
+  select(-mega) |>
+  wordcloud2::wordcloud2(fontFamily = "NamumSquare")
+
+saveWidget(none_seoul, "tmp.html", selfcontained = FALSE)
+webshot("tmp.html", "seoul.png", delay = 5, vwidth = 1200, vheight = 900)
